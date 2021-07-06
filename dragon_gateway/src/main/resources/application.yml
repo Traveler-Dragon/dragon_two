@@ -1,0 +1,48 @@
+server:
+  port: 3011  #${ } #服务端口
+  #  servlet:
+  #    context-path: /app
+  tomcat:
+    basedir: /data
+zuul:
+  sensitive-headers: Access-Control-Allow-Origin
+  ignored-headers: Access-Control-Allow-Origin,H-APP-Id,Token,APPToken
+  semaphore:
+    #最大并发数
+    max-semaphores: 3000
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
+  routes:
+    dragon:  #路由名称，名称任意，保持所有路由名称唯一
+      path: /dragon/**
+      serviceId: http://localhost:8080 #指定服务id，从Eureka中找到服务的ip和端口
+      strip-prefix: true
+      sensitiveHeaders:
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+  ##调试
+  eureka:
+    enabled: true
+  eager-load:
+    enabled: true
+    clients:
+      - dragon
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
