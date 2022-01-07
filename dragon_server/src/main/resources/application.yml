@@ -3,16 +3,36 @@ server:
   servlet:
     context-path: /
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest #172.16.171.12:15672    family-kaifa   vhost: family-kaifa    123456
+    password: guest
+    virtual-host: /
+    # 手动提交消息
+    listener:
+      simple:
+        acknowledge-mode: auto
+        concurrency: 2      # 消费端的监听个数
+        max-concurrency: 10 # 消费端的监听最大个数
+        prefetch: 1         # 每个消费端预处理消息数
+        retry:
+          enabled: true
+          max-attempts: 6
+          initial-interval: 10000
+  data:
+    mongodb:
+      uri: mongodb://172.16.171.12:27017/imcore_family-kaifa
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/dragonTwo?serverTimezone=GMT%2B8&useSSL=false&useUnicode=true&allowMultiQueries=true&characterEncoding=UTF-8
+    url: jdbc:mysql://182.92.204.198:3306/dragon?serverTimezone=GMT%2B8&useSSL=false&useUnicode=true&allowMultiQueries=true&characterEncoding=UTF-8
     username: root
-    password: root
+    password: traveler-dragon
   redis:
-    host: localhost
+    host: 182.92.204.198
     port: 6379
-    password:
-    database: 2
+    password: traveler-dragon
+    database: 0
     timeout: 6000
 logging:
   level:
@@ -20,8 +40,8 @@ logging:
 mybatis-plus:
   mapper-locations: /mapper/*.xml
   type-aliases-package: com.traveler.server.model.entity
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     banner: false
 
@@ -38,3 +58,14 @@ dragon:
     port: 8081
     logpath:
     logretentiondays: 30
+aliPay:
+  appId: 2016102600762260
+  serverUrl: https://openapi.alipaydev.com/gateway.do
+  privateKey: MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCEcW4i9r4ZB1s9pAs1iEb9a689hgZvfT9R3PqtiH3lLjG6nABEKUNkf6DBJeG3RCwtQiRhRraHso1SVZ5sEx1XlQHh25M6rrofST5NbcrSBEiKO1uTBTkKAvPI6yrDsobKtuKnKQAc17cu21LP4KZsfZ7/VKgrW1FJXbRYvBR0zLU0dWOpk15yWF1TGRJ5C1YbXybsSpxhiM4kw8RP7/g9WAZtu90/ElM6S1tWoE0XqxuR8I6NP+y5nEBN4O0gBDXVjSIrYeTiADrILAD2KCQRqddK8nlG9S37A+U0sB0csqvsHxgYAK8sxEqzBc/CYzJY9iluZtmkatU9Bdr+Oh7XAgMBAAECggEAE7tikUr5n3j9Gv3pvZwEF5WHkj75jnq2iFfH8Tq4pwBu4EKFt6H+LGbnaF9gdZFuk3+bM/L5FtZ/P5kJ9UgTwwysLx4rnT6S9D5RTe/hm9CPjiixyAGrMdamw3Rl9qoOcv00X3s4TRPGcvCyMc5ifR9qJNhUBcGhJrETQXUkBxKRtZIXsXYuISiTRvOKG7qoidOYv6mMcnmT8UyyYzWaMycefrcOG++GuzZ+ouFjTLnQJxJk/jXexfOtjY+Wx3T7f4+uoOTOzWGsIrjYbDybvDzqvH0KdZmfU9iyjYvENgpeVqywLdnNmeedhgQskAL3PbVvF7AOvN3OmtOvY6CT4QKBgQC+5YU7UOTIuAK7rQwHXOh+7puInrWPEEBSVmW5uH/L4YH6qs1PBGdXiiS+hu+KNDNMeht366suvSm3G2ZV6svpG6omBhvvWmbQEsl1++SKO2kVdlLMIW3p23BQJvH8y5faT5Ml+mV4k0g6WAU61jmZ/SdTKupioFWZ+fjBBYyUAwKBgQCxnI0Efadb9YSaomlOP8YE4z5BMYU2iGTyPU7yk99opGAEr83QHf5/p2n/rCMfcBOGfxFI9JEmjRxXdDShTQhmMk4BRPXXsBGQWSyN/ZfQ+qCjzKi5I1LovRkhUVOG8S5rpUbc+B0q91Dez8nfzGXQImxxcwRRwtYcTqHcbYJznQKBgGLNaKfKtp8snj2E0zT8YVlRJi8P9eiWALSdAwmc9IgRr7SNsrWzEcm9Nkdmj5R4cBSlHpJy56bJQU4EYHMXk3KTXv1PLCY2JACNuLfYJ/Fjzn/NPg1pP/pKGVdi0NyGg5H6na6Kavp9QGTyKcLKHgYVgMUK8UUatzN6rcU5mgkBAoGALRfhGbXJSuivzQ7VC5/XZ6BGSwkGmEzSzEnShHYUr52kHyx/ZYpn9gMMP3R1ymKLIoeaXNpzC8Wh33ZKcnV7X28ALQRUInm6S9rIHBi5db5cEJpCcBbO0vZHrhTWzxjmvz/MGQgJZ8I4zwkUaPSdGNXUkI0yGIwODkvMfolzKGUCgYBY2R6Kd/KYgsMdk3eYQ3npdFpwGLSVH/V7F30lpc8dL9s3ZDNI4mmZLs/Unqla+mwaAN5+uadHfTz1334naFhOHiXrU6fjnrEL7Il9xf9v9rCEldY/q9fg4AWIk4czxxpmGx65IXA40V5T2loNo8kNmxGwkd+zJ9kgl0AAS7OTpQ==
+  publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhHFuIva+GQdbPaQLNYhG/WuvPYYGb30/Udz6rYh95S4xupwARClDZH+gwSXht0QsLUIkYUa2h7KNUlWebBMdV5UB4duTOq66H0k+TW3K0gRIijtbkwU5CgLzyOsqw7KGyrbipykAHNe3LttSz+CmbH2e/1SoK1tRSV20WLwUdMy1NHVjqZNeclhdUxkSeQtWG18m7EqcYYjOJMPET+/4PVgGbbvdPxJTOktbVqBNF6sbkfCOjT/suZxATeDtIAQ11Y0iK2Hk4gA6yCwA9igkEanXSvJ5RvUt+wPlNLAdHLKr7B8YGACvLMRKswXPwmMyWPYpbmbZpGrVPQXa/joe1wIDAQAB
+  aliPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4V9lxzO9ocOwippX6MUCER0HZGILOSzGwUmOd1MACDrbTdySovgLvsvzRg+jQ9uZbH1YTIWg9V0tPyXdQSp6kEbNQl4x7nAuYZSZ5JqQXEVU6zy+M1xl3sZ5eqvuf7BMK4nd4b1fbuV9Ht8QhdbPrTTdUvYdLeMl57wBZF9oR9qjkZi+L0JhtxX7eHbrZqlnGCSSCmvrHMkqokvxRjb1z2UzgU2vPEr5ijyFosHdrSCm8iE+xdoXpkyX53/Zm8W6InQ3Ls2ASWN4npfEB/bymM5CgaFQEuvV5aNBKjUNmpWXFFnk3z/3YOHuh4I6IfMgHMrR6zFv/Ob8hWW57+pvGwIDAQAB
+  format: JSON
+  charset: UTF-8
+  signType: RSA2
+  returnUrl: http://localhost:8080/aliPay/callBack
+  notifyUrl: http://localhost:8080/aliPay/callBack

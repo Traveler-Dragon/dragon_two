@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
-@ConfigurationProperties(prefix = "dragon")
+//@Component
+//@ConfigurationProperties(prefix = "dragon")
 public class XxlJobConfig {
 
     @Value("${dragon.admin.address}")

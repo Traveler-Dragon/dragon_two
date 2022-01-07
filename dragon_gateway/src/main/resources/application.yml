@@ -1,5 +1,5 @@
 server:
-  port: 3011  #${ } #·þÎñ¶Ë¿Ú
+  port: 3011  #${ } #ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½
   #  servlet:
   #    context-path: /app
   tomcat:
@@ -8,22 +8,22 @@ zuul:
   sensitive-headers: Access-Control-Allow-Origin
   ignored-headers: Access-Control-Allow-Origin,H-APP-Id,Token,APPToken
   semaphore:
-    #×î´ó²¢·¢Êý
+    #ï¿½ï¿½ó²¢·ï¿½ï¿½ï¿½
     max-semaphores: 3000
   host:
     socket-timeout-millis: 60000
     connect-timeout-millis: 60000
   routes:
-    dragon:  #Â·ÓÉÃû³Æ£¬Ãû³ÆÈÎÒâ£¬±£³ÖËùÓÐÂ·ÓÉÃû³ÆÎ¨Ò»
+    dragon:  #Â·ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¨Ò»
       path: /dragon/**
-      serviceId: http://localhost:8080 #Ö¸¶¨·þÎñid£¬´ÓEurekaÖÐÕÒµ½·þÎñµÄipºÍ¶Ë¿Ú
+      serviceId: http://localhost:8080 #Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½idï¿½ï¿½ï¿½ï¿½Eurekaï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ipï¿½Í¶Ë¿ï¿½
       strip-prefix: true
       sensitiveHeaders:
 
 ribbon:
   ReadTimeout: 60000
   ConnectTimeout: 60000
-  ##µ÷ÊÔ
+  ##ï¿½ï¿½ï¿½ï¿½
   eureka:
     enabled: true
   eager-load:

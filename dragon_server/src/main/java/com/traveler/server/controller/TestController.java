@@ -9,13 +9,19 @@ import cn.hutool.http.HttpUtil;
 import com.traveler.server.model.bo.BaseResponse;
 import com.traveler.server.model.dto.LoginDto;
 import com.traveler.server.model.dto.ShandwDto;
+import com.traveler.server.model.entity.Config;
 import com.traveler.server.model.entity.ImageCache;
 import com.traveler.server.model.entity.OrderInfo;
 import com.traveler.server.model.entity.User;
+import com.traveler.server.service.TestService;
+import com.traveler.server.util.IdWorker;
+import com.traveler.server.util.SnowFlake;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,21 +32,104 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/dragon")
 @Slf4j
 public class TestController {
-    TimedCache<String,String> timedCache = CacheUtil.newTimedCache(1000);
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private TestService testService;
+
+
+//    @GetMapping("getOrderId")
+//    public BaseResponse getOrderId(){
+//        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+//        String concat = format.format(new Date()).concat(Long.toString());
+//        testService.addOrderSn(concat);
+//        log.info("订单长度为: {}",concat.length());
+//        return BaseResponse.success(concat);
+//    }
+
+    @PostMapping("/redissonTest")
+    public BaseResponse redissonTest(){
+        testService.redissonTest("lockKey");
+        return BaseResponse.success();
+    }
+
+    @GetMapping("/setOrderSn")
+    public BaseResponse setOrderSn(){
+        SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmss", Locale.getDefault());
+        Date date = new Date();
+        String concat = format.format(date).concat(String.valueOf(System.currentTimeMillis()).substring(11)).concat(createNonceStr(2));
+        int result = testService.addOrderSn(concat);
+        log.info("添加订单结果: "+result);
+        return BaseResponse.success(concat);
+    }
+
+    @GetMapping("/getOrderSn")
+    public BaseResponse getOrderSn(){
+        List<Config> configs = testService.getOrderSn();
+        log.info("添加订单结果: "+configs);
+        return BaseResponse.success(configs);
+    }
+
+    @GetMapping("/redisZSet")
+    public BaseResponse redisZSet(){
+        redisTemplate.opsForZSet().add("test","test01",1);
+        redisTemplate.opsForZSet().add("test","test02",1);
+        redisTemplate.opsForZSet().add("test","test03",1);
+        return BaseResponse.success();
+    }
+
+    @GetMapping("/redisZCount")
+    public BaseResponse redisZCount(@RequestParam("value") String value){
+        Double score = redisTemplate.opsForZSet().score("test", value);
+        redisTemplate.opsForZSet().add("test",value,score++);
+        return BaseResponse.success();
+    }
+
+    @GetMapping("/redisZRange")
+    public BaseResponse redisZRange(){
+        Set test = redisTemplate.opsForZSet().reverseRange("test", 0, -1);
+        return BaseResponse.success(test);
+    }
+
+    @GetMapping("/redisSize")
+    public BaseResponse redisSize(){
+        long count = redisTemplate.opsForZSet().size("test");
+        return BaseResponse.success(count);
+    }
+
+    @GetMapping("/redisHash")
+    public BaseResponse redisHash(@RequestParam("categoryId") Integer categoryId,
+                                  @RequestParam("goodsId") Integer goodsId){
+        redisTemplate.opsForHash().put("family_goods:"+categoryId,goodsId,"goodsClass");
+        return BaseResponse.success();
+    }
+    @GetMapping("/redisHashGet")
+    public BaseResponse redisHashGet(@RequestParam(value = "categoryId",required = false) Integer categoryId,
+                                  @RequestParam(value = "goodsId",required = false) Integer goodsId){
+//        redisTemplate.opsForHash().put("family_goods:"+categoryId,goodsId,"goodsClass");
+        Set keys = redisTemplate.opsForHash().keys("family_goods:"+categoryId);
+//        String c = redisTemplate.opsForHash().get("family_goods:"+categoryId, null).toString();
+        Map entries = redisTemplate.opsForHash().entries("family_goods:" + categoryId);
+        redisTemplate.opsForHash();
+        log.info("数据:   "+entries);
+        return BaseResponse.success(entries);
+    }
 
     @PostMapping("/orderInfo")
     public BaseResponse orderInfo(@Valid @RequestBody OrderInfo orderInfo){
         log.info(orderInfo.toString());
         boolean flag = checkSign(orderInfo);
-        if (!flag) return BaseResponse.error();
+        if (!flag) {
+            return BaseResponse.error();
+        }
         return BaseResponse.success();
     }
 
@@ -138,5 +227,15 @@ public class TestController {
         return DigestUtils.md5Hex(sign).toLowerCase();
     }
 
+    private String createNonceStr(int size) {
+        StringBuilder res = new StringBuilder();
+        String chars = "0123456789";
+        for (int i = 0; i < size; i++)
+        {
+            Random rd = new Random();
+            res.append(chars.charAt(rd.nextInt(chars.length() - 1)));
+        }
+        return res.toString();
+    }
 
 }

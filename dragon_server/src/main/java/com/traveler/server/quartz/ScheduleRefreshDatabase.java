@@ -34,7 +34,7 @@ public class ScheduleRefreshDatabase {
         String currentCron = trigger.getCronExpression();
         QueryWrapper<Config> wrapper = new QueryWrapper<>();
 
-        String searchCron = configMapper.selectOne(wrapper).getCron();
+        String searchCron = configMapper.selectOne(wrapper).getOrderSn();
         System.out.println(currentCron);
         System.out.println(searchCron);
 

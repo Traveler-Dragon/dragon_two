@@ -24,16 +24,16 @@ public class ScheduleTask {
 
 	public void sayHello(){
 
-		List<FileExist> fileExists = fileService.selectAddressByActive(1);
-
-		if (!(fileExists.size() > 0)) return;
-
-		LOGGER.info("不存在的文件有: {}",fileExists.toString());
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-
-
-		String fileName = "FileExist"+simpleDateFormat.format(new Date())+".xlsx";
-		String path = "C:\\Users\\DELL\\Desktop\\FileExist\\"+fileName;
-		EasyExcel.write(path,FileExist.class).sheet("不存在文件").doWrite(fileExists);
+//		List<FileExist> fileExists = fileService.selectAddressByActive(1);
+//
+//		if (!(fileExists.size() > 0)) return;
+//
+//		LOGGER.info("不存在的文件有: {}",fileExists.toString());
+//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+//
+//
+//		String fileName = "FileExist"+simpleDateFormat.format(new Date())+".xlsx";
+//		String path = "C:\\Users\\DELL\\Desktop\\FileExist\\"+fileName;
+//		EasyExcel.write(path,FileExist.class).sheet("不存在文件").doWrite(fileExists);
 	}
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traveler.server.mapper.FamilyMomentsMapper">
+
+
+    <insert id="insertMomentWithComment">
+        insert into family_moment_with_comment (moment_id,comment_id) values (#{momentId},#{commentId})
+    </insert>
+    <select id="selectByMomentId" resultType="java.lang.String">
+        select comment_id from family_moment_with_comment where moment_id = #{momentId}
+    </select>
+</mapper>

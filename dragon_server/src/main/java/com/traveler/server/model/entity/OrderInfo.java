@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -15,7 +18,9 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class OrderInfo {
 
+
     @NotNull(message = "订单ID不能为空")
+    @Range(message = "id只能是0或者1",min = 0,max = 1)
     private Integer order_id;
 
     @NotBlank(message = "渠道ID不能为空")
